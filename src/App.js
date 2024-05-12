@@ -6,31 +6,46 @@ import TableComp from './components/TableComp';
 
 function App() {
   const [data, setData] = useState([]);
+  const [error, setError] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const indexOfLastRow = currentPage * rowsPerPage;
   const indexOfFirstRow = indexOfLastRow - rowsPerPage;
-  const currentView = data.slice(indexOfFirstRow, indexOfLastRow) 
+  const currentView = data.slice(indexOfFirstRow, indexOfLastRow);
 
   const getData = async () => {
-    try{
+    try {
       let res = await axios.get("https://geektrust.s3-ap-southeast-1.amazonaws.com/adminui-problem/members.json");
       setData(res.data);
-    }catch(e){
-      console.error("Error fetching the data.")
+    } catch (e) {
+      console.error("Error fetching the data.", e);
+      setError("Failed to fetch data. Please try again later.");
     }
-
   }
 
   useEffect(() => {
     getData();
-  },[])
+  }, [])
+
+  const handlePreviousPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(prev => prev - 1);
+    }
+  };
+
+  const handleNextPage = () => {
+    const totalPages = Math.ceil(data.length / rowsPerPage);
+    if (currentPage < totalPages) {
+      setCurrentPage(prev => prev + 1);
+    }
+  };
 
   console.log(data);
 
   return (
     <div className="App">
       <h3>Employee Data Table</h3>
+      {error && <div className="error">{error}</div>}
       <div className='table'>
         <table className='tableData'>
           <thead>
@@ -54,9 +69,9 @@ function App() {
         </table>
       </div>
       <div className='toggle'>
-        <button className='toggleButton' onClick={() => setCurrentPage(prev => prev - 1)}>Previous</button>
+        <button className='toggleButton' onClick={handlePreviousPage}>Previous</button>
         <span className='pageNum' key={currentPage}>{currentPage}</span>
-        <button className='toggleButton' onClick={() => setCurrentPage(prev => prev + 1)}>Next</button>
+        <button className='toggleButton' onClick={handleNextPage}>Next</button>
       </div>
     </div>
   );
