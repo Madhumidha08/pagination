@@ -1,16 +1,15 @@
-import logo from './logo.svg';
 import './App.css';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
-import TableComp from './components/TableComp';
 
 function App() {
   const [data, setData] = useState([]);
   const [error, setError] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const [rowsPerPage, setRowsPerPage] = useState(10);
-  const indexOfLastRow = currentPage * rowsPerPage;
-  const indexOfFirstRow = indexOfLastRow - rowsPerPage;
+  // Removed unused variable `rowsPerPage`
+  // const [rowsPerPage, setRowsPerPage] = useState(10);
+  const indexOfLastRow = currentPage * 10; // Hardcoded rowsPerPage to 10
+  const indexOfFirstRow = indexOfLastRow - 10;
   const currentView = data.slice(indexOfFirstRow, indexOfLastRow);
 
   const getData = async () => {
@@ -34,7 +33,7 @@ function App() {
   };
 
   const handleNextPage = () => {
-    const totalPages = Math.ceil(data.length / rowsPerPage);
+    const totalPages = Math.ceil(data.length / 10); // Hardcoded rowsPerPage to 10
     if (currentPage < totalPages) {
       setCurrentPage(prev => prev + 1);
     }
@@ -58,7 +57,7 @@ function App() {
           </thead>
           <tbody>
             {currentView.map(d => (
-              <tr id={d.id}>
+              <tr key={d.id}>
                 <td>{d.id}</td>
                 <td>{d.name}</td>
                 <td>{d.email}</td>
