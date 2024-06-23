@@ -1,79 +1,85 @@
-import './App.css';
-import axios from 'axios';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
-function App() {
-  const [data, setData] = useState([]);
-  const [error, setError] = useState(null);
+const App = () => {
+  const [users, setUsers] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
-  // Removed unused variable `rowsPerPage`
-  // const [rowsPerPage, setRowsPerPage] = useState(10);
-  const indexOfLastRow = currentPage * 10; // Hardcoded rowsPerPage to 10
-  const indexOfFirstRow = indexOfLastRow - 10;
-  const currentView = data.slice(indexOfFirstRow, indexOfLastRow);
+  const [userPerPage] = useState(10);
 
-  const getData = async () => {
+  const getFetchUsers = async () => {
     try {
-      let res = await axios.get("https://geektrust.s3-ap-southeast-1.amazonaws.com/adminui-problem/members.json");
-      setData(res.data);
-    } catch (e) {
-      console.error("Error fetching the data.", e);
-      setError("Failed to fetch data. Please try again later.");
+      const res = await fetch('https://geektrust.s3-ap-southeast-1.amazonaws.com/adminui-problem/members.json');
+      const data = await res.json();
+      setUsers(data);
+      console.log(data);
+    } catch (error) {
+      console.error(error);
+      window.alert('Failed to fetch data');
     }
-  }
+  };
 
   useEffect(() => {
-    getData();
-  }, [])
+    getFetchUsers();
+  }, []);
 
-  const handlePreviousPage = () => {
-    if (currentPage > 1) {
-      setCurrentPage(prev => prev - 1);
-    }
+  // calculate the total num. of pages.
+  const totalPage = Math.ceil(users.length / userPerPage);
+
+  // get the user for current page.
+  const getPaginatedUser = () => {
+    const startIndex = (currentPage - 1) * userPerPage;
+    const endIndex = startIndex + userPerPage;
+    return users.slice(startIndex, endIndex);
   };
-
-  const handleNextPage = () => {
-    const totalPages = Math.ceil(data.length / 10); // Hardcoded rowsPerPage to 10
-    if (currentPage < totalPages) {
-      setCurrentPage(prev => prev + 1);
-    }
-  };
-
-  console.log(data);
 
   return (
-    <div className="App">
-      <h3>Employee Data Table</h3>
-      {error && <div className="error">{error}</div>}
-      <div className='table'>
-        <table className='tableData'>
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Name</th>
-              <th>Email</th>
-              <th>Role</th>
+    <div className="w-[96%] m-auto mt-[1rem]">
+      <table className="w-full shadow-sm shadow-green-900">
+        <thead className="bg-green-700">
+          <tr>
+            <th className="py-2">Id</th>
+            <th className="py-2">Name</th>
+            <th className="py-2">Email</th>
+            <th className="py-2">Role</th>
+          </tr>
+        </thead>
+        <tbody>
+          {users && getPaginatedUser().map((ele) => (
+            <tr key={ele.id}>
+              <td className="px-[1rem] py-2">{ele.id}</td>
+              <td className="text-center px-[1rem] py-2">{ele.name}</td>
+              <td className="text-center px-[1rem] py-2">{ele.email}</td>
+              <td className="text-center px-[1rem] py-2">{ele.role}</td>
             </tr>
-          </thead>
-          <tbody>
-            {currentView.map(d => (
-              <tr key={d.id}>
-                <td>{d.id}</td>
-                <td>{d.name}</td>
-                <td>{d.email}</td>
-                <td>{d.role}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-      <div className='toggle'>
-        <button className='toggleButton' onClick={handlePreviousPage}>Previous</button>
-        <span className='pageNum' key={currentPage}>{currentPage}</span>
-        <button className='toggleButton' onClick={handleNextPage}>Next</button>
+          ))}
+        </tbody>
+      </table>
+      <div className="flex items-center justify-center gap-2 h-[5rem] mt-[2rem]">
+        <button
+          className="bg-green-900 px-3.5 py-1.5 rounded-md"
+          onClick={() => {
+            if (currentPage > 1) {
+              setCurrentPage(currentPage - 1);
+            }
+          }}
+          disabled={currentPage === 1}
+        >
+          Previous
+        </button>
+        <button className="bg-green-900 px-3.5 py-1.5 rounded-md">{currentPage}</button>
+        <button
+          className="bg-green-900 px-3.5 py-1.5 rounded-md"
+          onClick={() => {
+            if (currentPage < totalPage) {
+              setCurrentPage(currentPage + 1);
+            }
+          }}
+          disabled={currentPage === totalPage}
+        >
+          Next
+        </button>
       </div>
     </div>
   );
-}
+};
 
 export default App;
