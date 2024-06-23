@@ -1,58 +1,42 @@
-.App {
+#root {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem;
   text-align: center;
 }
 
-.table{
-  display: flex;
-  justify-content: center;
+.logo {
+  height: 6em;
+  padding: 1.5em;
+  will-change: filter;
+  transition: filter 300ms;
+}
+.logo:hover {
+  filter: drop-shadow(0 0 2em #646cffaa);
+}
+.logo.react:hover {
+  filter: drop-shadow(0 0 2em #61dafbaa);
 }
 
-.tableData{
-  font-family: Arial, Helvetica, sans-serif;
-  border-collapse: collapse;
-  width: 100%;
+@keyframes logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
-.tableData td, .tableData th {
-  border: 1px solid #ddd;
-  padding: 8px;
+@media (prefers-reduced-motion: no-preference) {
+  a:nth-of-type(2) .logo {
+    animation: logo-spin infinite 20s linear;
+  }
 }
 
-.tableData th {
-  padding-top: 12px;
-  padding-bottom: 12px;
-  text-align: center;
-  background-color: #04AA6D;
-  color: white;
+.card {
+  padding: 2em;
 }
 
-.toggle{
-  display: flex;
-  gap: 20px;
-  justify-content: center;
-  align-items: center;
-  height: 80px;
-}
-
-.toggleButton{
-  width: 100px;
-  height: 40px;
-  background-color: #04AA6D;
-  border: 1px solid #04AA6D;
-  cursor: pointer;
-  transition: all 0.5s ease-in-out;
-  border-radius: 2px;
-}
-
-.toggleButton:hover{
-  background-color: aquamarine;
-  border: 1px solid aquamarine;
-}
-
-.pageNum{
-  width: 30px;
-  height: 30px;
-  background-color: #04AA6D;
-  border-radius: 2px;
-  padding-top: 5px;
+.read-the-docs {
+  color: #888;
 }
